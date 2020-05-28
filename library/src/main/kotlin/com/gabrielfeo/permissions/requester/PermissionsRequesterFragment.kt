@@ -54,7 +54,7 @@ class PermissionsRequesterFragment(
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val permissionRequest = pendingPermissionRequests[requestCode] ?: return
         lifecycleScope.launch {
-            runCatching { ensureGrantedInResults(permissionRequest.permissions, grantResults) }
+            runCatching { ensureGrantedInResults(grantResults, permissionRequest.permissions) }
                 .onSuccess { permissionRequest.continuation.resume(Unit) }
                 .onFailure { exception ->
                     val actualException = mapExceptionOf(permissionRequest, exception)

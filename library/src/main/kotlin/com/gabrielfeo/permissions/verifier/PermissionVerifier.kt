@@ -2,14 +2,23 @@ package com.gabrielfeo.permissions.verifier
 
 interface PermissionVerifier {
     /**
-     * Verify permissions are currently granted.
+     * Ensure all [permissions] are currently granted.
      * @throws PermissionsDeniedException if one or more permissions are denied
      */
     suspend fun ensureGranted(permissions: Array<out String>)
 
     /**
-     * Verify permissions have been granted in [grantResults].
+     * Ensure all [requestedPermissions] have been granted in [grantResults].
      * @throws PermissionsDeniedException if one or more permissions have been denied
      */
-    suspend fun ensureGrantedInResults(permissions: Array<out String>, grantResults: IntArray)
+    suspend fun ensureGrantedInResults(grantResults: IntArray, requestedPermissions: Array<out String>)
 }
+
+suspend fun PermissionVerifier.ensureGranted(
+    vararg permission: String
+) = ensureGranted(permissions = permission)
+
+suspend fun PermissionVerifier.ensureGrantedInResults(
+    grantResults: IntArray,
+    vararg requestedPermissions: String
+) = ensureGranted(permissions = requestedPermissions)

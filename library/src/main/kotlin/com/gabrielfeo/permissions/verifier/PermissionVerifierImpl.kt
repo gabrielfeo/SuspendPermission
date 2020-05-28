@@ -23,10 +23,10 @@ class PermissionVerifierImpl(
         }
     }
 
-    override suspend fun ensureGrantedInResults(permissions: Array<out String>, grantResults: IntArray) {
-        val deniedPermissions = permissions.filterIndexed { i, _ -> grantResults[i] != PERMISSION_GRANTED }
+    override suspend fun ensureGrantedInResults(grantResults: IntArray, requestedPermissions: Array<out String>) {
+        val deniedPermissions = requestedPermissions.filterIndexed { i, _ -> grantResults[i] != PERMISSION_GRANTED }
         if (deniedPermissions.any()) {
-            throwExceptionFor(permissions, deniedPermissions)
+            throwExceptionFor(requestedPermissions, deniedPermissions)
         }
     }
 
