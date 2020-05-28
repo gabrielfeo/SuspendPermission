@@ -39,7 +39,7 @@ class PermissionVerifierImpl(
     ) {
         throw PermissionsCurrentlyDeniedException(
             deniedPermissions.toTypedArray(),
-            allPermissionsWereDenied = deniedPermissions.size == permissions.size
+            allRequestedAreDenied = deniedPermissions.size == permissions.size
         )
     }
 

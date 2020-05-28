@@ -74,7 +74,7 @@ class PermissionsRequesterFragment(
                 permanentlyDeniedPermissions.isNotEmpty() -> PermissionsPermanentlyDeniedException(
                     permanentlyDeniedPermissions.toTypedArray(), // TODO Write Array-returning filter
                     exception.deniedPermissions,
-                    allPermissionsWereDenied = exception.deniedPermissions.size == permissionRequest.permissions.size
+                    allRequestedAreDenied = exception.deniedPermissions.size == permissionRequest.permissions.size
                 )
                 else -> exception.clone(
                     allPermissionWereDenied = exception.deniedPermissions.size == permissionRequest.permissions.size
@@ -86,8 +86,8 @@ class PermissionsRequesterFragment(
 
     private fun PermissionsCurrentlyDeniedException.clone(
         deniedPermissions: Array<out String> = this.deniedPermissions,
-        allPermissionWereDenied: Boolean = this.allPermissionsAreDenied
-    ) = PermissionsCurrentlyDeniedException(deniedPermissions, allPermissionsAreDenied)
+        allPermissionWereDenied: Boolean = this.allRequestedAreDenied
+    ) = PermissionsCurrentlyDeniedException(deniedPermissions, allRequestedAreDenied)
     // TODO Debug. IDE says this will always use instance allPermissionWereDenied (WTF)
 
 }
