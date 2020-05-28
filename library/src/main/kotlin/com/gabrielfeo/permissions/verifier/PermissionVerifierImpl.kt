@@ -11,27 +11,29 @@ class PermissionVerifierImpl(
     private val dispatcher: CoroutineDispatcher
 ) : PermissionVerifier {
 
-    override suspend fun ensureGranted(permissions: Array<out String>) {
-        coroutineScope scope@{
-            val results = permissions
-                .map { androidPermission -> checkPermissionAsync(androidPermission) }
-                .awaitAll()
-            val deniedPermissions = permissions.filterIndexed { i, _ -> results[i] != PERMISSION_GRANTED }
-            if (deniedPermissions.isNotEmpty()) {
-                throwExceptionFor(permissions, deniedPermissions)
-            }
+    override suspend fun ensureGranted(scope: CoroutineScope, permissions: Array<out String>) {
+        val results = permissions
+            .map { androidPermission -> checkPermissionAsync(scope, androidPermission) }
+            .awaitAll()
+        val deniedPermissions = permissions.filterIndexed { i, _ -> results[i] != PERMISSION_GRANTED }
+        if (deniedPermissions.isNotEmpty()) {
+            throwExceptionFor(permissions, deniedPermissions)
         }
     }
 
-    override suspend fun ensureGrantedInResults(grantResults: IntArray, requestedPermissions: Array<out String>) {
+    override suspend fun ensureGrantedInResults(
+        scope: CoroutineScope,
+        grantResults: IntArray,
+        requestedPermissions: Array<out String>
+    ) {
         val deniedPermissions = requestedPermissions.filterIndexed { i, _ -> grantResults[i] != PERMISSION_GRANTED }
         if (deniedPermissions.any()) {
             throwExceptionFor(requestedPermissions, deniedPermissions)
         }
     }
 
-    private fun CoroutineScope.checkPermissionAsync(androidPermission: String): Deferred<Int> =
-        async(dispatcher) { PermissionChecker.checkCallingOrSelfPermission(context, androidPermission) }
+    private fun checkPermissionAsync(scope: CoroutineScope, androidPermission: String): Deferred<Int> =
+        scope.async(dispatcher) { PermissionChecker.checkCallingOrSelfPermission(context, androidPermission) }
 
     private fun throwExceptionFor(
         permissions: Array<out String>,

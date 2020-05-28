@@ -33,7 +33,7 @@ class PermissionsRequesterFragment(
         requestCode: Int
     ) {
         lifecycleScope.launchWhenCreated {
-            runCatching { ensureGranted(permissions) }
+            runCatching { ensureGranted(this, permissions) }
                 .onSuccess { continuation.resume(Unit) }
                 .recover { exception ->
                     if (exception is PermissionsCurrentlyDeniedException) {
@@ -54,7 +54,7 @@ class PermissionsRequesterFragment(
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val permissionRequest = pendingPermissionRequests[requestCode] ?: return
         lifecycleScope.launch {
-            runCatching { ensureGrantedInResults(grantResults, permissionRequest.permissions) }
+            runCatching { ensureGrantedInResults(this, grantResults, permissionRequest.permissions) }
                 .onSuccess { permissionRequest.continuation.resume(Unit) }
                 .onFailure { exception ->
                     val actualException = mapExceptionOf(permissionRequest, exception)
