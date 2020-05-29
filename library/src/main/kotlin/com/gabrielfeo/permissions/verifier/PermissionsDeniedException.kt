@@ -10,7 +10,6 @@ sealed class PermissionsDeniedException(
         allRequestedAreDenied: Boolean
     ) : PermissionsDeniedException(deniedPermissions, allRequestedAreDenied)
 
-    // TODO Should be no overlap between permanently denied and currently denied arrays
     class PermissionsPermanentlyDeniedException(
         val permanentlyDeniedPermissions: Array<out String>,
         val currentlyDeniedPermissions: Array<out String>,
