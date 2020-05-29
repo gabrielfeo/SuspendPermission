@@ -29,7 +29,7 @@ open class PermissionVerifierImpl internal constructor(
         val results = permissions
             .map { androidPermission -> getPermissionResultAsync(scope, androidPermission) }
             .awaitAll()
-        val deniedPermissions = permissions.filterIndexed { i, _ -> isResultGrantedResult(results[i]) }
+        val deniedPermissions = permissions.filterIndexed { i, _ -> !isResultGrantedResult(results[i]) }
         if (deniedPermissions.isNotEmpty()) {
             throwExceptionFor(permissions, deniedPermissions)
         }
@@ -40,7 +40,7 @@ open class PermissionVerifierImpl internal constructor(
         grantResults: IntArray,
         requestedPermissions: Array<out String>
     ) {
-        val deniedPermissions = requestedPermissions.filterIndexed { i, _ -> isResultGrantedResult(grantResults[i]) }
+        val deniedPermissions = requestedPermissions.filterIndexed { i, _ -> !isResultGrantedResult(grantResults[i]) }
         if (deniedPermissions.any()) {
             throwExceptionFor(requestedPermissions, deniedPermissions)
         }
