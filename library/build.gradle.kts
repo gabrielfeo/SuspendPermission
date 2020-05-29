@@ -21,6 +21,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
     }
@@ -33,16 +37,16 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    api(kotlin("coroutines-android"))
+    implementation(Kotlin.StdLib)
+    api(Kotlin.Coroutines.Android)
 
     implementation("androidx.core:core-ktx:1.3.0")
     implementation("androidx.fragment:fragment-ktx:1.2.4")
     implementation("androidx.appcompat:appcompat:1.1.0")
 
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("coroutines-test"))
-    testImplementation(kotlin("test-junit5"))
+    testImplementation(Kotlin.Testing.Jvm)
+    testImplementation(Kotlin.Testing.JUnit5)
+    testImplementation(Kotlin.Coroutines.Testing)
     testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
     testImplementation("org.mockito:mockito-core:3.3.0")
 }
