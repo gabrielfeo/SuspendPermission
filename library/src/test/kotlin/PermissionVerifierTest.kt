@@ -1,5 +1,8 @@
 import com.gabrielfeo.permissions.verifier.PermissionVerifier
 import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl
+import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.CURRENTLY_DENIED
+import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.GRANTED
+import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.PERMANENTLY_DENIED
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsPermanentlyDeniedException
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -10,18 +13,12 @@ import kotlin.test.assertTrue
 
 class PermissionVerifierTest {
 
-    companion object PermissionResults {
-        const val GRANTED = 0
-        const val CURRENTLY_DENIED = 1
-        const val PERMANENTLY_DENIED = 2
-    }
-
     private fun createVerifier(
         permissionsToGrant: Array<out String> = emptyArray(),
         permissionsToPermanentlyDeny: Array<out String> = emptyArray()
     ): PermissionVerifier = PermissionVerifierImpl(
         dispatcher = TestCoroutineDispatcher(),
-        isResultGrantedResult = { result -> result == GRANTED },
+        mapResult = { _, result -> result },
         getPermissionResult = { permission ->
             when (permission) {
                 in permissionsToGrant -> GRANTED

@@ -9,7 +9,6 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.gabrielfeo.permissions.verifier.PermissionVerifier
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsPermanentlyDeniedException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation
@@ -56,39 +55,9 @@ class PermissionsRequesterFragment(
         lifecycleScope.launch {
             runCatching { ensureGrantedInResults(this, grantResults, permissionRequest.permissions) }
                 .onSuccess { permissionRequest.continuation.resume(Unit) }
-                .onFailure { exception ->
-                    val actualException = mapExceptionOf(permissionRequest, exception)
-                    permissionRequest.continuation.resumeWithException(actualException)
-                }
+                .onFailure { exception -> permissionRequest.continuation.resumeWithException(exception) }
         }
     }
-
-    private fun mapExceptionOf(
-        permissionRequest: PermissionRequest,
-        exception: Throwable
-    ): Throwable = when (exception) {
-        is PermissionsCurrentlyDeniedException -> {
-            val permanentlyDeniedPermissions = exception.deniedPermissions
-                .filterNot { permission -> shouldShowRequestPermissionRationale(permission) }
-            when {
-                permanentlyDeniedPermissions.isNotEmpty() -> PermissionsPermanentlyDeniedException(
-                    permanentlyDeniedPermissions.toTypedArray(), // TODO Write Array-returning filter
-                    exception.deniedPermissions,
-                    allRequestedAreDenied = exception.deniedPermissions.size == permissionRequest.permissions.size
-                )
-                else -> exception.clone(
-                    allPermissionWereDenied = exception.deniedPermissions.size == permissionRequest.permissions.size
-                )
-            }
-        }
-        else -> exception
-    }
-
-    private fun PermissionsCurrentlyDeniedException.clone(
-        deniedPermissions: Array<out String> = this.deniedPermissions,
-        allPermissionWereDenied: Boolean = this.allRequestedAreDenied
-    ) = PermissionsCurrentlyDeniedException(deniedPermissions, allRequestedAreDenied)
-    // TODO Debug. IDE says this will always use instance allPermissionWereDenied (WTF)
 
 }
 

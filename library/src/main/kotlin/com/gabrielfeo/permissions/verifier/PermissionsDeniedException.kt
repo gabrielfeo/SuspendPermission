@@ -15,12 +15,8 @@ sealed class PermissionsDeniedException(
         val permanentlyDeniedPermissions: Array<out String>,
         val currentlyDeniedPermissions: Array<out String>,
         deniedPermissions: Array<out String>,
-        allRequestedAreDenied: Boolean
-    ) : PermissionsDeniedException(deniedPermissions, allRequestedAreDenied) {
-
-        val allRequestedArePermanentlyDenied
-            get() = permanentlyDeniedPermissions.size == deniedPermissions.size
-
-    }
+        allRequestedAreDenied: Boolean,
+        val allRequestedArePermanentlyDenied: Boolean
+    ) : PermissionsDeniedException(deniedPermissions, allRequestedAreDenied)
 
 }
