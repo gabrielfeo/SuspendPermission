@@ -1,10 +1,11 @@
 package com.gabrielfeo.permissions.verifier
 
 import android.content.Context
-import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY
 import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.CURRENTLY_DENIED
+import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.GRANTED
+import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.PERMANENTLY_DENIED
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsPermanentlyDeniedException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -12,11 +13,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 
-class AndroidPermissionVerifier(
+@Suppress("FunctionName")
+fun AndroidPermissionVerifier(
     context: Context,
     isPermanentlyDenied: (permission: String) -> Boolean,
     dispatcher: CoroutineDispatcher
-) : PermissionVerifierImpl(
+): PermissionVerifier = PermissionVerifierImpl(
     getPermissionResult = { permission -> PermissionChecker.checkCallingOrSelfPermission(context, permission) },
     mapResult = { permission: String, result: Int ->
         when {
@@ -29,8 +31,7 @@ class AndroidPermissionVerifier(
 )
 
 
-@RestrictTo(LIBRARY)
-open class PermissionVerifierImpl internal constructor(
+internal open class PermissionVerifierImpl internal constructor(
     private val getPermissionResult: (permission: String) -> Int,
     private val mapResult: (permission: String, platformResult: Int) -> Int,
     private val dispatcher: CoroutineDispatcher
