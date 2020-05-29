@@ -14,7 +14,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 
 @Suppress("FunctionName")
-fun AndroidPermissionVerifier(
+internal fun AndroidPermissionVerifier(
     context: Context,
     isPermanentlyDenied: (permission: String) -> Boolean,
     dispatcher: CoroutineDispatcher
