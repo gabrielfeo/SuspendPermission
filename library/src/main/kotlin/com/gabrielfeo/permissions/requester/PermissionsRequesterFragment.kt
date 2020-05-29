@@ -7,19 +7,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import com.gabrielfeo.permissions.verifier.AndroidPermissionVerifier
 import com.gabrielfeo.permissions.verifier.PermissionVerifier
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class PermissionsRequesterFragment(
-    permissionVerifier: PermissionVerifier
-) : Fragment(), PermissionVerifier by permissionVerifier {
+class PermissionsRequesterFragment : Fragment() {
 
     private var pendingPermissionRequests: MutableMap<Int, PermissionRequest> = HashMap(1)
+    private lateinit var permissionVerifier: PermissionVerifier
 
     private class PermissionRequest(
         val permissions: Array<out String>,
@@ -32,7 +33,12 @@ class PermissionsRequesterFragment(
         requestCode: Int
     ) {
         lifecycleScope.launchWhenCreated {
-            runCatching { ensureGranted(this, permissions) }
+            permissionVerifier = AndroidPermissionVerifier(
+                requireContext(),
+                isPermanentlyDenied = { permission -> shouldShowRequestPermissionRationale(permission) },
+                dispatcher = Dispatchers.Main // TODO Background?
+            )
+            runCatching { permissionVerifier.ensureGranted(this, permissions) }
                 .onSuccess { continuation.resume(Unit) }
                 .recover { exception ->
                     if (exception is PermissionsCurrentlyDeniedException) {
@@ -53,7 +59,7 @@ class PermissionsRequesterFragment(
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val permissionRequest = pendingPermissionRequests[requestCode] ?: return
         lifecycleScope.launch {
-            runCatching { ensureGrantedInResults(this, grantResults, permissionRequest.permissions) }
+            runCatching { permissionVerifier.ensureGrantedInResults(this, grantResults, permissionRequest.permissions) }
                 .onSuccess { permissionRequest.continuation.resume(Unit) }
                 .onFailure { exception -> permissionRequest.continuation.resumeWithException(exception) }
         }
@@ -68,7 +74,7 @@ suspend fun FragmentActivity.requestPermissionsAsync(
     requestCode: Int
 ) = suspendCancellableCoroutine<Unit> { continuation ->
     supportFragmentManager.commit {
-        add(PermissionsRequesterFragment::class.java, null, TAG)
+        add(PermissionsRequesterFragment(), TAG)
         runOnCommit {
             lifecycleScope.launch {
                 (supportFragmentManager.findFragmentByTag(TAG) as? PermissionsRequesterFragment)?.let {
@@ -84,7 +90,7 @@ suspend fun Fragment.requestPermissionsAsync(
     requestCode: Int
 ) = suspendCancellableCoroutine<Unit> { continuation ->
     childFragmentManager.commit {
-        add(PermissionsRequesterFragment::class.java, null, TAG)
+        add(PermissionsRequesterFragment(), TAG)
         runOnCommit {
             viewLifecycleOwnerLiveData.value?.lifecycleScope?.launch {
                 (childFragmentManager.findFragmentByTag(TAG) as? PermissionsRequesterFragment)?.let {
