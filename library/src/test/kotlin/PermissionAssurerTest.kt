@@ -1,8 +1,8 @@
-import com.gabrielfeo.permissions.verifier.PermissionVerifier
-import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl
-import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.CURRENTLY_DENIED
-import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.GRANTED
-import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.PERMANENTLY_DENIED
+import com.gabrielfeo.permissions.verifier.PermissionAssurer
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.GRANTED
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsPermanentlyDeniedException
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -11,12 +11,12 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class PermissionVerifierTest {
+class PermissionAssurerTest {
 
     private fun createVerifier(
         permissionsToGrant: Array<out String> = emptyArray(),
         permissionsToPermanentlyDeny: Array<out String> = emptyArray()
-    ): PermissionVerifier = PermissionVerifierImpl(
+    ): PermissionAssurer = PermissionAssurerImpl(
         dispatcher = TestCoroutineDispatcher(),
         mapResult = { _, result -> result },
         getPermissionResult = { permission ->

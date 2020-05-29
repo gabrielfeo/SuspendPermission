@@ -3,9 +3,9 @@ package com.gabrielfeo.permissions.verifier
 import android.content.Context
 import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
-import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.CURRENTLY_DENIED
-import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.GRANTED
-import com.gabrielfeo.permissions.verifier.PermissionVerifierImpl.PermissionResults.PERMANENTLY_DENIED
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.GRANTED
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsPermanentlyDeniedException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,7 +18,7 @@ internal fun AndroidPermissionVerifier(
     context: Context,
     isPermanentlyDenied: (permission: String) -> Boolean,
     dispatcher: CoroutineDispatcher
-): PermissionVerifier = PermissionVerifierImpl(
+): PermissionAssurer = PermissionAssurerImpl(
     getPermissionResult = { permission -> PermissionChecker.checkCallingOrSelfPermission(context, permission) },
     mapResult = { permission: String, result: Int ->
         when {
@@ -31,11 +31,11 @@ internal fun AndroidPermissionVerifier(
 )
 
 
-internal open class PermissionVerifierImpl internal constructor(
+internal open class PermissionAssurerImpl internal constructor(
     private val getPermissionResult: (permission: String) -> Int,
     private val mapResult: (permission: String, platformResult: Int) -> Int,
     private val dispatcher: CoroutineDispatcher
-) : PermissionVerifier {
+) : PermissionAssurer {
 
     internal companion object PermissionResults {
         const val GRANTED = 0

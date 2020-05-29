@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.gabrielfeo.permissions.verifier.AndroidPermissionVerifier
-import com.gabrielfeo.permissions.verifier.PermissionVerifier
+import com.gabrielfeo.permissions.verifier.PermissionAssurer
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ import kotlin.coroutines.resumeWithException
 class PermissionsRequesterFragment : Fragment() {
 
     private var pendingPermissionRequests: MutableMap<Int, PermissionRequest> = HashMap(1)
-    private lateinit var permissionVerifier: PermissionVerifier
+    private lateinit var permissionAssurer: PermissionAssurer
 
     private class PermissionRequest(
         val permissions: Array<out String>,
@@ -33,12 +33,12 @@ class PermissionsRequesterFragment : Fragment() {
         requestCode: Int
     ) {
         lifecycleScope.launchWhenCreated {
-            permissionVerifier = AndroidPermissionVerifier(
+            permissionAssurer = AndroidPermissionVerifier(
                 requireContext(),
                 isPermanentlyDenied = { permission -> shouldShowRequestPermissionRationale(permission) },
                 dispatcher = Dispatchers.Main // TODO Background?
             )
-            runCatching { permissionVerifier.ensureGranted(this, permissions) }
+            runCatching { permissionAssurer.ensureGranted(this, permissions) }
                 .onSuccess { continuation.resume(Unit) }
                 .recover { exception ->
                     if (exception is PermissionsCurrentlyDeniedException) {
@@ -59,7 +59,7 @@ class PermissionsRequesterFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val permissionRequest = pendingPermissionRequests[requestCode] ?: return
         lifecycleScope.launch {
-            runCatching { permissionVerifier.ensureGrantedInResults(this, grantResults, permissionRequest.permissions) }
+            runCatching { permissionAssurer.ensureGrantedInResults(this, grantResults, permissionRequest.permissions) }
                 .onSuccess { permissionRequest.continuation.resume(Unit) }
                 .onFailure { exception -> permissionRequest.continuation.resumeWithException(exception) }
         }

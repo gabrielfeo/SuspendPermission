@@ -2,7 +2,7 @@ package com.gabrielfeo.permissions.verifier
 
 import kotlinx.coroutines.CoroutineScope
 
-internal interface PermissionVerifier {
+internal interface PermissionAssurer {
     /**
      * Ensure all [permissions] are currently granted.
      * @throws PermissionsDeniedException if one or more permissions are denied
