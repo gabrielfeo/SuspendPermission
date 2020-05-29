@@ -1,21 +1,35 @@
 package com.gabrielfeo.permissions.verifier
 
 import android.content.Context
+import androidx.annotation.RestrictTo
+import androidx.annotation.RestrictTo.Scope.LIBRARY
 import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
 import kotlinx.coroutines.*
 
-class PermissionVerifierImpl(
-    private val context: Context,
+class AndroidPermissionVerifier(
+    context: Context,
+    dispatcher: CoroutineDispatcher
+) : PermissionVerifierImpl(
+    getPermissionResult = { permission -> PermissionChecker.checkCallingOrSelfPermission(context, permission) },
+    isResultGrantedResult = { result: Int -> result == PERMISSION_GRANTED },
+    dispatcher = dispatcher
+)
+
+
+@RestrictTo(LIBRARY)
+open class PermissionVerifierImpl internal constructor(
+    private val getPermissionResult: (permission: String) -> Int,
+    private val isResultGrantedResult: (result: Int) -> Boolean,
     private val dispatcher: CoroutineDispatcher
 ) : PermissionVerifier {
 
     override suspend fun ensureGranted(scope: CoroutineScope, permissions: Array<out String>) {
         val results = permissions
-            .map { androidPermission -> checkPermissionAsync(scope, androidPermission) }
+            .map { androidPermission -> getPermissionResultAsync(scope, androidPermission) }
             .awaitAll()
-        val deniedPermissions = permissions.filterIndexed { i, _ -> results[i] != PERMISSION_GRANTED }
+        val deniedPermissions = permissions.filterIndexed { i, _ -> isResultGrantedResult(results[i]) }
         if (deniedPermissions.isNotEmpty()) {
             throwExceptionFor(permissions, deniedPermissions)
         }
@@ -26,14 +40,14 @@ class PermissionVerifierImpl(
         grantResults: IntArray,
         requestedPermissions: Array<out String>
     ) {
-        val deniedPermissions = requestedPermissions.filterIndexed { i, _ -> grantResults[i] != PERMISSION_GRANTED }
+        val deniedPermissions = requestedPermissions.filterIndexed { i, _ -> isResultGrantedResult(grantResults[i]) }
         if (deniedPermissions.any()) {
             throwExceptionFor(requestedPermissions, deniedPermissions)
         }
     }
 
-    private fun checkPermissionAsync(scope: CoroutineScope, androidPermission: String): Deferred<Int> =
-        scope.async(dispatcher) { PermissionChecker.checkCallingOrSelfPermission(context, androidPermission) }
+    private fun getPermissionResultAsync(scope: CoroutineScope, androidPermission: String): Deferred<Int> =
+        scope.async(dispatcher) { getPermissionResult(androidPermission) }
 
     private fun throwExceptionFor(
         permissions: Array<out String>,
