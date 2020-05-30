@@ -9,7 +9,7 @@ An idiomatic permissions API with Kotlin Coroutines
 val camera = Manifest.permission.CAMERA
 val mic = Manifest.permission.RECORD_AUDIO
 try {
-    requestPermissionsAsync(arrayOf(camera, mic), "13949")) // suspend
+    requestPermissionsAsync(arrayOf(camera, mic), 13949)) // suspend
 } catch (exception: PermissionsDeniedException) {
     when {
         camera in exception.permanentlyDeniedPermissions -> // respect the user's decision
