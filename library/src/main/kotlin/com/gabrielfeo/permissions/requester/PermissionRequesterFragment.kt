@@ -48,7 +48,7 @@ suspend fun Fragment.requestPermissionsAsync(
     }
 }
 
-private class PermissionRequesterFragment : Fragment() {
+class PermissionRequesterFragment : Fragment() {
 
     private var pendingPermissionRequests: MutableMap<Int, PermissionRequest> = HashMap(1)
     private lateinit var permissionAssurer: PermissionAssurer
