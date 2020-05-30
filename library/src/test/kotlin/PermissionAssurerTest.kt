@@ -3,12 +3,10 @@ import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.GRANTED
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsPermanentlyDeniedException
+import com.gabrielfeo.permissions.verifier.PermissionsDeniedException
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class PermissionAssurerTest {
@@ -42,21 +40,14 @@ class PermissionAssurerTest {
         try {
             verifier.ensureGranted(this, permissions = permissionsToGrant + "B")
             assert(false) { "Expected exception not thrown" }
-        } catch (exception: PermissionsCurrentlyDeniedException) {
-            val denied = exception.deniedPermissions
-            assertTrue(denied.size == 1 && denied.first() == "B")
-            assertFalse(exception.allRequestedAreDenied)
-        }
-    }
-
-    @Test
-    fun `Requesting denied permissions specifies when all are denied`() = runBlockingTest {
-        val verifier = createVerifier(permissionsToGrant = emptyArray())
-        try {
-            verifier.ensureGranted(this, permissions = arrayOf("B", "C"))
-            assert(false) { "Expected exception not thrown" }
-        } catch (exception: PermissionsCurrentlyDeniedException) {
-            assertTrue(exception.allRequestedAreDenied)
+        } catch (exception: PermissionsDeniedException) {
+            with(exception) {
+                assertTrue(permanentlyDeniedPermissions.isEmpty())
+                assertTrue(deniedPermissions.contentEquals(currentlyDeniedPermissions))
+                with(deniedPermissions) {
+                    assertTrue(size == 1 && first() == "B")
+                }
+            }
         }
     }
 
@@ -70,25 +61,10 @@ class PermissionAssurerTest {
             val permissionsToRequest = toBeGranted + toBeDenied + toBePermanentlyDenied
             verifier.ensureGranted(this, permissionsToRequest)
             assert(false) { "Expected exception not thrown" }
-        } catch (exception: PermissionsPermanentlyDeniedException) {
-            assertFalse(exception.allRequestedAreDenied)
-            assertFalse(exception.allRequestedArePermanentlyDenied)
+        } catch (exception: PermissionsDeniedException) {
             assertTrue(exception.deniedPermissions.contentEquals(arrayOf("B", "C")))
             assertTrue(exception.currentlyDeniedPermissions.contentEquals(arrayOf("B")))
             assertTrue(exception.permanentlyDeniedPermissions.contentEquals(arrayOf("C")))
-        }
-    }
-
-    @Test
-    fun `Requesting permanently denied permissions specified when all are permanently denied`() = runBlockingTest {
-        val toBePermanentlyDenied =  arrayOf("C")
-        val verifier = createVerifier(permissionsToPermanentlyDeny = toBePermanentlyDenied)
-        try {
-            verifier.ensureGranted(this, toBePermanentlyDenied)
-            assert(false) { "Expected exception not thrown" }
-        } catch (exception: PermissionsPermanentlyDeniedException) {
-            assertTrue(exception.allRequestedAreDenied)
-            assertTrue(exception.allRequestedArePermanentlyDenied)
         }
     }
 

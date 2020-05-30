@@ -6,8 +6,6 @@ import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.GRANTED
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsPermanentlyDeniedException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -82,33 +80,10 @@ internal open class PermissionAssurerImpl internal constructor(
             }
         }
         if (deniedPermissions.isNotEmpty()) {
-            throwExceptionFor(
-                resultsByPermission.keys.toTypedArray(),
-                deniedPermissions,
-                currentlyDeniedPermissions,
-                permanentlyDeniedPermissions
-            )
-        }
-    }
-
-    private fun throwExceptionFor(
-        permissions: Array<out String>,
-        deniedPermissions: List<String>,
-        currentlyDeniedPermissions: List<String>,
-        permanentlyDeniedPermissions: List<String>
-    ) {
-        if (permanentlyDeniedPermissions.isEmpty()) {
-            throw PermissionsCurrentlyDeniedException(
+            throw PermissionsDeniedException(
                 deniedPermissions.toTypedArray(),
-                allRequestedAreDenied = deniedPermissions.size == permissions.size
-            )
-        } else {
-            throw PermissionsPermanentlyDeniedException(
                 permanentlyDeniedPermissions.toTypedArray(), // TODO Review
-                currentlyDeniedPermissions.toTypedArray(),
-                deniedPermissions.toTypedArray(),
-                allRequestedAreDenied = deniedPermissions.size == permissions.size,
-                allRequestedArePermanentlyDenied = permanentlyDeniedPermissions.size == permissions.size
+                currentlyDeniedPermissions.toTypedArray()
             )
         }
     }

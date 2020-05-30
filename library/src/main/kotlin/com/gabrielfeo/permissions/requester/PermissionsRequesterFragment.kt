@@ -9,7 +9,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.gabrielfeo.permissions.verifier.AndroidPermissionVerifier
 import com.gabrielfeo.permissions.verifier.PermissionAssurer
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException.PermissionsCurrentlyDeniedException
+import com.gabrielfeo.permissions.verifier.PermissionsDeniedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -41,10 +41,12 @@ class PermissionsRequesterFragment : Fragment() {
             runCatching { permissionAssurer.ensureGranted(this, permissions) }
                 .onSuccess { continuation.resume(Unit) }
                 .recover { exception ->
-                    if (exception is PermissionsCurrentlyDeniedException) {
+                    if (exception is PermissionsDeniedException) {
                         pendingPermissionRequests[requestCode] = PermissionRequest(exception.deniedPermissions, continuation)
                         requestPermissions(exception.deniedPermissions, requestCode)
-                    } else continuation.resumeWithException(exception)
+                    } else {
+                        continuation.resumeWithException(exception)
+                    }
                 }
         }
     }

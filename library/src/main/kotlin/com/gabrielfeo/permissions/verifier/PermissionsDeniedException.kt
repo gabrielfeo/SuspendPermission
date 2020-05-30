@@ -1,21 +1,7 @@
 package com.gabrielfeo.permissions.verifier
 
-sealed class PermissionsDeniedException(
+class PermissionsDeniedException(
     val deniedPermissions: Array<out String>,
-    val allRequestedAreDenied: Boolean
-) : RuntimeException("Requested permissions have been denied") {
-
-    class PermissionsCurrentlyDeniedException(
-        deniedPermissions: Array<out String>,
-        allRequestedAreDenied: Boolean
-    ) : PermissionsDeniedException(deniedPermissions, allRequestedAreDenied)
-
-    class PermissionsPermanentlyDeniedException(
-        val permanentlyDeniedPermissions: Array<out String>,
-        val currentlyDeniedPermissions: Array<out String>,
-        deniedPermissions: Array<out String>,
-        allRequestedAreDenied: Boolean,
-        val allRequestedArePermanentlyDenied: Boolean
-    ) : PermissionsDeniedException(deniedPermissions, allRequestedAreDenied)
-
-}
+    val permanentlyDeniedPermissions: Array<out String>,
+    val currentlyDeniedPermissions: Array<out String>
+) : RuntimeException("Requested permissions have been denied")
