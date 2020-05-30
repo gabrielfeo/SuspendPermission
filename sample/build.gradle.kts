@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.library")
+    id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
 }
@@ -32,27 +32,16 @@ android {
 
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
-
 dependencies {
+    implementation(project(":library"))
     implementation(Kotlin.StdLib)
-
-    api(Kotlin.Coroutines.Android)
     with(AndroidX) {
-        api(Core)
-        api(AppCompat)
-        api(Fragment)
+        implementation(Core)
+        implementation(AppCompat)
+        implementation(Fragment)
+        with(AndroidX.Lifecycle) {
+            implementation(Runtime)
+            kapt(Compiler)
+        }
     }
-
-    testImplementation(Kotlin.Testing.Jvm)
-    testImplementation(Kotlin.Testing.JUnit5)
-    testImplementation(Kotlin.Coroutines.Testing)
-    testImplementation(JUnit.Jupiter)
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

@@ -1,6 +1,7 @@
 rootProject.name = "suspendpermission"
 include(
-    ":library"
+    ":library",
+    ":sample"
 )
 
 enableFeaturePreview("GRADLE_METADATA")
