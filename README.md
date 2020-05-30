@@ -1,4 +1,4 @@
-# SuspendingPermissionRequest
+# SuspendPermission
 An idiomatic permissions API with Kotlin Coroutines
 
 ## Usage
