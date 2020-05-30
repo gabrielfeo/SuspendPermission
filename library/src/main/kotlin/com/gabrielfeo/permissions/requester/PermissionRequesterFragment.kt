@@ -7,9 +7,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import com.gabrielfeo.permissions.verifier.AndroidPermissionVerifier
-import com.gabrielfeo.permissions.verifier.PermissionAssurer
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException
+import com.gabrielfeo.permissions.assurer.AndroidPermissionAssurer
+import com.gabrielfeo.permissions.assurer.PermissionAssurer
+import com.gabrielfeo.permissions.assurer.PermissionsDeniedException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation
@@ -32,7 +32,7 @@ internal class PermissionRequesterFragment : Fragment() {
         requestCode: Int
     ) {
         lifecycleScope.launchWhenCreated {
-            permissionAssurer = AndroidPermissionVerifier(
+            permissionAssurer = AndroidPermissionAssurer(
                 requireContext(),
                 isPermanentlyDenied = { permission -> shouldShowRequestPermissionRationale(permission) }
             )

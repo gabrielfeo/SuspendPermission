@@ -1,9 +1,9 @@
-import com.gabrielfeo.permissions.verifier.PermissionAssurer
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.GRANTED
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
-import com.gabrielfeo.permissions.verifier.PermissionsDeniedException
+import com.gabrielfeo.permissions.assurer.PermissionAssurer
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.GRANTED
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
+import com.gabrielfeo.permissions.assurer.PermissionsDeniedException
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test

@@ -1,11 +1,11 @@
-package com.gabrielfeo.permissions.verifier
+package com.gabrielfeo.permissions.assurer
 
 import android.content.Context
 import androidx.core.content.PermissionChecker
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.GRANTED
-import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.GRANTED
+import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
 import kotlinx.coroutines.*
 
 /**
@@ -15,7 +15,7 @@ import kotlinx.coroutines.*
  * [android.app.Activity.shouldShowRequestPermissionRationale].
  */
 @Suppress("FunctionName")
-internal fun AndroidPermissionVerifier(
+internal fun AndroidPermissionAssurer(
     context: Context,
     isPermanentlyDenied: (permission: String) -> Boolean,
     dispatcher: CoroutineDispatcher = Dispatchers.Main // TODO Could be background?

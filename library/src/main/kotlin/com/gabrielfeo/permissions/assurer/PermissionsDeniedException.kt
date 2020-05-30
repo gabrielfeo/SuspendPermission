@@ -1,4 +1,4 @@
-package com.gabrielfeo.permissions.verifier
+package com.gabrielfeo.permissions.assurer
 
 /**
  * Requested or verified permissions have been denied.
