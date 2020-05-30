@@ -1,4 +1,4 @@
-group = "com.gabrielfeo.suspend.permissions"
+group = "com.gabrielfeo.suspend.permission"
 version = "0.0.1"
 
 buildscript {

@@ -1,12 +1,12 @@
-package com.gabrielfeo.suspend.permissions.sample
+package com.gabrielfeo.suspend.permission.sample
 
 import android.Manifest
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.gabrielfeo.permissions.assurer.PermissionsDeniedException
-import com.gabrielfeo.permissions.requester.requestPermissionsAsync
+import com.gabrielfeo.suspend.permission.assurer.PermissionsDeniedException
+import com.gabrielfeo.suspend.permission.requester.requestPermissionsAsync
 
 class MainActivity : AppCompatActivity() {
 

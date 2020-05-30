@@ -1,15 +1,15 @@
 @file:Suppress("SimpleRedundantLet")
 
-package com.gabrielfeo.permissions.requester
+package com.gabrielfeo.suspend.permission.requester
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
-import com.gabrielfeo.permissions.assurer.AndroidPermissionAssurer
-import com.gabrielfeo.permissions.assurer.PermissionAssurer
-import com.gabrielfeo.permissions.assurer.PermissionsDeniedException
+import com.gabrielfeo.suspend.permission.assurer.AndroidPermissionAssurer
+import com.gabrielfeo.suspend.permission.assurer.PermissionAssurer
+import com.gabrielfeo.suspend.permission.assurer.PermissionsDeniedException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation

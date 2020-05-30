@@ -1,11 +1,11 @@
-package com.gabrielfeo.permissions.assurer
+package com.gabrielfeo.suspend.permission.assurer
 
 import android.content.Context
 import androidx.core.content.PermissionChecker
-import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults
-import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
-import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.GRANTED
-import com.gabrielfeo.permissions.assurer.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
+import com.gabrielfeo.suspend.permission.assurer.PermissionAssurerImpl.PermissionResults
+import com.gabrielfeo.suspend.permission.assurer.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
+import com.gabrielfeo.suspend.permission.assurer.PermissionAssurerImpl.PermissionResults.GRANTED
+import com.gabrielfeo.suspend.permission.assurer.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
 import kotlinx.coroutines.*
 
 /**

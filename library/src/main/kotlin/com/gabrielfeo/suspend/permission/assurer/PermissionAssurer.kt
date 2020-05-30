@@ -1,4 +1,4 @@
-package com.gabrielfeo.permissions.assurer
+package com.gabrielfeo.suspend.permission.assurer
 
 import kotlinx.coroutines.CoroutineScope
 
