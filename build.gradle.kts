@@ -1,6 +1,3 @@
-group = "com.gabrielfeo.suspend.permission"
-version = "0.0.1"
-
 buildscript {
     repositories {
         google()
@@ -10,6 +7,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:3.5.3")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.Version}")
+        classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
     }
 }
 
