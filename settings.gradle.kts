@@ -1,4 +1,4 @@
-rootProject.name = "suspendpermissions"
+rootProject.name = "suspendpermission"
 include(
     ":library"
 )

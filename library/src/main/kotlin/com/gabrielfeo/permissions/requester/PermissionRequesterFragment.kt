@@ -17,7 +17,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class PermissionsRequesterFragment : Fragment() {
+class PermissionRequesterFragment : Fragment() {
 
     private var pendingPermissionRequests: MutableMap<Int, PermissionRequest> = HashMap(1)
     private lateinit var permissionAssurer: PermissionAssurer
@@ -76,10 +76,10 @@ suspend fun FragmentActivity.requestPermissionsAsync(
     requestCode: Int
 ) = suspendCancellableCoroutine<Unit> { continuation ->
     supportFragmentManager.commit {
-        add(PermissionsRequesterFragment(), TAG)
+        add(PermissionRequesterFragment(), TAG)
         runOnCommit {
             lifecycleScope.launch {
-                (supportFragmentManager.findFragmentByTag(TAG) as? PermissionsRequesterFragment)?.let {
+                (supportFragmentManager.findFragmentByTag(TAG) as? PermissionRequesterFragment)?.let {
                     it.requestPermissionsWith(continuation, permissions, requestCode)
                 }
             }
@@ -92,10 +92,10 @@ suspend fun Fragment.requestPermissionsAsync(
     requestCode: Int
 ) = suspendCancellableCoroutine<Unit> { continuation ->
     childFragmentManager.commit {
-        add(PermissionsRequesterFragment(), TAG)
+        add(PermissionRequesterFragment(), TAG)
         runOnCommit {
             viewLifecycleOwnerLiveData.value?.lifecycleScope?.launch {
-                (childFragmentManager.findFragmentByTag(TAG) as? PermissionsRequesterFragment)?.let {
+                (childFragmentManager.findFragmentByTag(TAG) as? PermissionRequesterFragment)?.let {
                     it.requestPermissionsWith(continuation, permissions, requestCode)
                 }
             }
