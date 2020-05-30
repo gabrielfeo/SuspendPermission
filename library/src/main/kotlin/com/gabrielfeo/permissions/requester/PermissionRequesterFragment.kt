@@ -26,9 +26,8 @@ suspend fun FragmentActivity.requestPermissionsAsync(
         add(PermissionRequesterFragment(), TAG)
         runOnCommit {
             lifecycleScope.launch {
-                (supportFragmentManager.findFragmentByTag(TAG) as? PermissionRequesterFragment)?.let {
-                    it.requestPermissionsWith(continuation, permissions, requestCode)
-                }
+                val requester = supportFragmentManager.findFragmentByTag(TAG) as PermissionRequesterFragment
+                requester.requestPermissionsWith(continuation, permissions, requestCode)
             }
         }
     }
@@ -42,9 +41,8 @@ suspend fun Fragment.requestPermissionsAsync(
         add(PermissionRequesterFragment(), TAG)
         runOnCommit {
             viewLifecycleOwner.lifecycleScope.launch {
-                (childFragmentManager.findFragmentByTag(TAG) as? PermissionRequesterFragment)?.let {
-                    it.requestPermissionsWith(continuation, permissions, requestCode)
-                }
+                val requester = childFragmentManager.findFragmentByTag(TAG) as PermissionRequesterFragment
+                requester.requestPermissionsWith(continuation, permissions, requestCode)
             }
         }
     }
