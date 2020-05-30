@@ -17,7 +17,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class PermissionRequesterFragment : Fragment() {
+internal class PermissionRequesterFragment : Fragment() {
 
     private var pendingPermissionRequests: MutableMap<Int, PermissionRequest> = HashMap(1)
     private lateinit var permissionAssurer: PermissionAssurer
