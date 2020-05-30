@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import com.gabrielfeo.permissions.verifier.AndroidPermissionVerifier
 import com.gabrielfeo.permissions.verifier.PermissionAssurer
 import com.gabrielfeo.permissions.verifier.PermissionsDeniedException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.Continuation
@@ -35,8 +34,7 @@ internal class PermissionRequesterFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             permissionAssurer = AndroidPermissionVerifier(
                 requireContext(),
-                isPermanentlyDenied = { permission -> shouldShowRequestPermissionRationale(permission) },
-                dispatcher = Dispatchers.Main // TODO Background?
+                isPermanentlyDenied = { permission -> shouldShowRequestPermissionRationale(permission) }
             )
             runCatching { permissionAssurer.ensureGranted(this, permissions) }
                 .onSuccess { continuation.resume(Unit) }

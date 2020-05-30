@@ -2,33 +2,45 @@ package com.gabrielfeo.permissions.verifier
 
 import android.content.Context
 import androidx.core.content.PermissionChecker
-import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.CURRENTLY_DENIED
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.GRANTED
 import com.gabrielfeo.permissions.verifier.PermissionAssurerImpl.PermissionResults.PERMANENTLY_DENIED
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 
+/**
+ * [PermissionAssurerImpl] with standard arguments for Android. Still requires arguments for things specific
+ * to the calling component, such as [isPermanentlyDenied] which is usually
+ * [android.app.Fragment.shouldShowRequestPermissionRationale] or
+ * [android.app.Activity.shouldShowRequestPermissionRationale].
+ */
 @Suppress("FunctionName")
 internal fun AndroidPermissionVerifier(
     context: Context,
     isPermanentlyDenied: (permission: String) -> Boolean,
-    dispatcher: CoroutineDispatcher
+    dispatcher: CoroutineDispatcher = Dispatchers.Main // TODO Could be background?
 ): PermissionAssurer = PermissionAssurerImpl(
+    dispatcher = dispatcher,
     getPermissionResult = { permission -> PermissionChecker.checkCallingOrSelfPermission(context, permission) },
     mapResult = { permission: String, result: Int ->
         when {
-            result == PERMISSION_GRANTED -> GRANTED
+            result == PermissionChecker.PERMISSION_GRANTED -> GRANTED
             isPermanentlyDenied(permission) -> PERMANENTLY_DENIED
             else -> CURRENTLY_DENIED
         }
-    },
-    dispatcher = dispatcher
+    }
 )
 
 
+/**
+ * Testable implementation of `PermissionAssurer`.
+ *
+ * @property getPermissionResult Gets the current result of a permission request. Must not trigger a request to the
+ * user.
+ * @param mapResult Maps the `platformResult` to one of the constants [PermissionResults].
+ * @param dispatcher The `CoroutineDispatcher` with which coroutines to get the current permission result should be
+ * started.
+ */
 internal open class PermissionAssurerImpl internal constructor(
     private val getPermissionResult: (permission: String) -> Int,
     private val mapResult: (permission: String, platformResult: Int) -> Int,
