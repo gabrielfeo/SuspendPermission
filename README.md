@@ -18,6 +18,6 @@ try {
 }
 ```
 
-Permissions will first be checked and the ones which aren't yet granted will be requested to the user, throwing a `PermissionsDeniedException` if any is denied. `PermissionsDeniedException` specifies which were permanently denied so that it's easy to decide what to do from there.
+Permissions will first be checked and the ones which aren't yet granted will be requested to the user, throwing a `PermissionsDeniedException` if any is denied. The exception specifies which were permanently denied so that it's easy to decide what to do.
 
 `requestPermissionsAsync` is available as an extension function on `androidx.app.FragmentActivity` and `androidx.fragment.Fragment`.
