@@ -41,7 +41,7 @@ suspend fun Fragment.requestPermissionsAsync(
     childFragmentManager.commit {
         add(PermissionRequesterFragment(), TAG)
         runOnCommit {
-            viewLifecycleOwnerLiveData.value?.lifecycleScope?.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 (childFragmentManager.findFragmentByTag(TAG) as? PermissionRequesterFragment)?.let {
                     it.requestPermissionsWith(continuation, permissions, requestCode)
                 }
