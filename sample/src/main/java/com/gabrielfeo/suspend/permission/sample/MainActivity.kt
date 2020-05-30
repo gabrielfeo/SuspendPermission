@@ -19,16 +19,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    suspend fun requestPermissions() {
+    private suspend fun requestPermissions() {
         val camera = Manifest.permission.CAMERA
         val mic = Manifest.permission.RECORD_AUDIO
         try {
             requestPermissionsAsync(arrayOf(camera, mic), 12553)
             changeText("Permissions granted")
         } catch (e: PermissionsDeniedException) {
-            when {
-                camera in e.permanentlyDeniedPermissions -> changeText("I really can't work without that one")
-                camera in e.currentlyDeniedPermissions -> changeText("OK, let me explain")
+            when (camera) {
+                in e.permanentlyDenied -> changeText("I really can't work without that one")
+                in e.currentlyDenied -> changeText("OK, let me explain")
                 else -> changeText("Be aware your video will have no sound") // (denied mic permission)
             }
         }

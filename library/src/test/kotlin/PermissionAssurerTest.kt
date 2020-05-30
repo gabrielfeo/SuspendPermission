@@ -42,9 +42,9 @@ class PermissionAssurerTest {
             assert(false) { "Expected exception not thrown" }
         } catch (exception: PermissionsDeniedException) {
             with(exception) {
-                assertTrue(permanentlyDeniedPermissions.isEmpty())
-                assertTrue(deniedPermissions.contentEquals(currentlyDeniedPermissions))
-                with(deniedPermissions) {
+                assertTrue(permanentlyDenied.isEmpty())
+                assertTrue(allDenied.contentEquals(currentlyDenied))
+                with(allDenied) {
                     assertTrue(size == 1 && first() == "B")
                 }
             }
@@ -62,9 +62,11 @@ class PermissionAssurerTest {
             verifier.ensureGranted(this, permissionsToRequest)
             assert(false) { "Expected exception not thrown" }
         } catch (exception: PermissionsDeniedException) {
-            assertTrue(exception.deniedPermissions.contentEquals(arrayOf("B", "C")))
-            assertTrue(exception.currentlyDeniedPermissions.contentEquals(arrayOf("B")))
-            assertTrue(exception.permanentlyDeniedPermissions.contentEquals(arrayOf("C")))
+            with(exception) {
+                assertTrue(allDenied.contentEquals(arrayOf("B", "C")))
+                assertTrue(currentlyDenied.contentEquals(arrayOf("B")))
+                assertTrue(permanentlyDenied.contentEquals(arrayOf("C")))
+            }
         }
     }
 

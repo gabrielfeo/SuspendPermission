@@ -50,7 +50,7 @@ suspend fun Fragment.requestPermissionsAsync(
 
 class PermissionRequesterFragment : Fragment() {
 
-    private var pendingPermissionRequests: MutableMap<Int, PermissionRequest> = HashMap(1)
+    private var pendingRequests: MutableMap<Int, PermissionRequest> = HashMap(1)
     private lateinit var permissionAssurer: PermissionAssurer
 
     private class PermissionRequest(
@@ -72,8 +72,8 @@ class PermissionRequesterFragment : Fragment() {
                 .onSuccess { continuation.resume(Unit) }
                 .recover { exception ->
                     if (exception is PermissionsDeniedException) {
-                        pendingPermissionRequests[requestCode] = PermissionRequest(exception.deniedPermissions, continuation)
-                        requestPermissions(exception.deniedPermissions, requestCode)
+                        pendingRequests[requestCode] = PermissionRequest(exception.allDenied, continuation)
+                        requestPermissions(exception.allDenied, requestCode)
                     } else {
                         continuation.resumeWithException(exception)
                     }
@@ -89,7 +89,7 @@ class PermissionRequesterFragment : Fragment() {
     @Suppress("ThrowableNotThrown")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val permissionRequest = pendingPermissionRequests[requestCode] ?: return
+        val permissionRequest = pendingRequests[requestCode] ?: return
         lifecycleScope.launch {
             runCatching { permissionAssurer.ensureGrantedInResults(this, grantResults, permissionRequest.permissions) }
                 .onSuccess { permissionRequest.continuation.resume(Unit) }
