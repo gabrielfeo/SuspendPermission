@@ -33,12 +33,11 @@ android {
 }
 
 repositories {
-    maven { url = uri("https://jitpack.io") }
+    maven("https://jitpack.io")
 }
 
 dependencies {
-    implementation("com.gabrielfeo:suspendpermission:-SNAPSHOT")
-    // Replace "-SNAPSHOT" with version from README
+    implementation("com.gabrielfeo:suspendpermission:1.0.0")
     implementation(Kotlin.StdLib)
     with(AndroidX) {
         implementation(Core)
